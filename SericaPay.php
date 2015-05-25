@@ -72,13 +72,13 @@ class WC_SericaPay extends WC_Payment_Gateway {
                 'type' => 'text',
                 'description' => __( 'This controls the title which the user sees during checkout.', 'SericaPay' ),
                 'desc_tip' => true,
-                'default' => __( 'SericaPay', 'SericaPay' )
+                'default' => __( '<img src="https://sericatrading.com/media/SericaPayWoo.png" />', 'SericaPay' )
             ),
             'description' => array(
                 'title' => __( 'Description', 'SericaPay' ),
                 'type' => 'textarea',
                 'description' => __( 'This controls the description which the user sees during checkout.', 'SericaPay' ),
-                'default' => __( 'Pay via SericaPay', 'SericaPay' )
+                'default' => __( 'Special Offer! Get <strong>$10.00 off your next purchase</strong>. Choose <strong>SericaPay</strong> as your payment method, place order, and signup. (First time customers, only.)', 'SericaPay' )
             ),
         );
 
