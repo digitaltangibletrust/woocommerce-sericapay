@@ -115,9 +115,11 @@ class WC_SericaPay extends WC_Payment_Gateway {
                     'price': <?php echo $value['data']->get_price(); ?>,
                     'qty': <?php echo $value['quantity'] ?>
                 });
+
             <?php
                 }
             ?>
+            SericaPay.setCartID('<?php echo $order_id; ?>');
             SericaPay.checkout();
         };
         </script>
