@@ -111,11 +111,10 @@ class WC_SericaPay extends WC_Payment_Gateway {
                 foreach ($items as $i => $value) {
             ?>
                 SericaPay.addProduct({
-                    'id': '<?php echo $value['data']->get_title() ?>',
+                    'id': '<?php echo $value['data']->get_title(); ?>',
                     'price': <?php echo $value['data']->get_price(); ?>,
-                    'qty': <?php echo $value['quantity'] ?>
+                    'qty': <?php echo $value['quantity']; ?>
                 });
-
             <?php
                 }
             ?>
@@ -141,7 +140,5 @@ class WC_SericaPay extends WC_Payment_Gateway {
     function thankyou() {
         echo $this->instructions != '' ? wpautop( $this->instructions ) : '';
     }
-
-
 
 }
