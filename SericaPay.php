@@ -108,15 +108,16 @@ class WC_SericaPay extends WC_Payment_Gateway {
               'container': 'sericapay'
             });
             <?php
-                foreach ($items as $i => $value) {
+              foreach ($items as $i => $value) {
+                $product = array(
+                  'id' => $value['data']->get_title(),
+                  'price' => $value['data']->get_price(),
+                  'qty' => $value['quantity']
+                );
             ?>
-                SericaPay.addProduct({
-                    'id': '<?php echo $value['data']->get_title(); ?>',
-                    'price': <?php echo $value['data']->get_price(); ?>,
-                    'qty': <?php echo $value['quantity']; ?>
-                });
+              SericaPay.addProduct(<?php echo json_encode($product); ?>);
             <?php
-                }
+              }
             ?>
             SericaPay.setCartID('<?php echo $order_id; ?>');
             SericaPay.checkout();
