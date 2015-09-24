@@ -99,6 +99,7 @@ class WC_SericaPay extends WC_Payment_Gateway {
         // Reduce stock levels
         $order->reduce_order_stock();
         $items = $woocommerce->cart->get_cart();
+        $taxes = $woocommerce->cart->get_taxes();
       
         ?>
         <script type="text/javascript">
@@ -119,6 +120,20 @@ class WC_SericaPay extends WC_Payment_Gateway {
             <?php
               }
             ?>
+            //taxes
+             <?php
+                foreach ($taxes as $i => $value) {
+                    $tax = array(
+                        'id' => $value->label,
+                        'price' => $value->amount,
+                        'qty' => 1
+                    );
+            ?>
+                SericaPay.addProduct(echo json_encode(product));
+            <?php
+                }
+            ?>
+
             SericaPay.setCartID('<?php echo $order_id; ?>');
             SericaPay.checkout();
         };
