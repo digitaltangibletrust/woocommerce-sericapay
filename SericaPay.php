@@ -99,8 +99,9 @@ class WC_SericaPay extends WC_Payment_Gateway {
         // Reduce stock levels
         $order->reduce_order_stock();
         $items = $woocommerce->cart->get_cart();
-        $taxes = $woocommerce->cart->get_taxes();
-      
+        $taxes = $woocommerce->cart->get_tax_totals();
+        $woocommerce->cart->calculate_shipping();
+        $shipping = $woocommerce->cart->shipping_total;
         ?>
         <script type="text/javascript">
         window.onSericaPayLoad = function () {
@@ -116,23 +117,28 @@ class WC_SericaPay extends WC_Payment_Gateway {
                   'qty' => $value['quantity']
                 );
             ?>
-              SericaPay.addProduct(<?php echo json_encode($product); ?>);
+            SericaPay.addProduct(<?php echo json_encode($product); ?>);
             <?php
               }
             ?>
             //taxes
-             <?php
+            <?php
                 foreach ($taxes as $i => $value) {
-                    $tax = array(
-                        'id' => $value->label,
-                        'price' => $value->amount,
-                        'qty' => 1
-                    );
+                    $tax = array('id' => $i, 'price' => $value->amount, 'qty' => 1 );
             ?>
-                SericaPay.addProduct(echo json_encode(product));
+            SericaPay.addProduct(<? echo json_encode($tax); ?>);
             <?php
                 }
             ?>
+
+            <?php
+                if ($shipping > 0) {
+            ?>
+               SericaPay.addProduct({"id": "Shipping", "price": <?=$shipping?>, "qty": 1});
+            <?php
+                }
+            ?>
+
 
             SericaPay.setCartID('<?php echo $order_id; ?>');
             SericaPay.checkout();
