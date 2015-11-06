@@ -32,11 +32,13 @@ class WC_SericaPay extends WC_Payment_Gateway {
         $this->enable_for_methods = $this->get_option( 'enable_for_methods', array() );
 
         // Actions.
-        if ( version_compare( WOOCOMMERCE_VERSION, '2.0.0', '>=' ) )
+        if ( version_compare( WOOCOMMERCE_VERSION, '2.0.0', '>=' ) ) {
             add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( &$this, 'process_admin_options' ) );
-        else
+        } else {
             add_action( 'woocommerce_update_options_payment_gateways', array( &$this, 'process_admin_options' ) );
+        }
 
+        add_action('woocommerce_receipt_' . $this->id, array($this, 'receipt_page'));
 
     }
 
@@ -85,19 +87,9 @@ class WC_SericaPay extends WC_Payment_Gateway {
     }
 
 
-
-
-    /* Process the payment and return the result. */
-    function process_payment ($order_id) {
+    function receipt_page ($order_id) {
         global $woocommerce;
-
         $order = new WC_Order( $order_id );
-
-        // Mark as on-hold
-        $order->update_status('on-hold', __( 'Your order wont be shipped until the funds have cleared in our account.', 'woocommerce' ));
-
-        // Reduce stock levels
-        $order->reduce_order_stock();
         $items = $woocommerce->cart->get_cart();
         $taxes = $woocommerce->cart->get_tax_totals();
         $woocommerce->cart->calculate_shipping();
@@ -121,7 +113,6 @@ class WC_SericaPay extends WC_Payment_Gateway {
             <?php
               }
             ?>
-            //taxes
             <?php
                 foreach ($taxes as $i => $value) {
                     $tax = array('id' => $i, 'price' => $value->amount, 'qty' => 1 );
@@ -146,15 +137,22 @@ class WC_SericaPay extends WC_Payment_Gateway {
         </script>
         <script type="text/javascript" src="https://sericatrading.com/js/SericaPayButton.js"></script>
         <?php
-        // Remove cart
         $woocommerce->cart->empty_cart();
-        exit;
+        // Mark as on-hold
+        $order->update_status('on-hold', __( 'Your order wont be shipped until the funds have cleared in our account.', 'woocommerce' ));
+        // Reduce stock levels
+        $order->reduce_order_stock();
 
-        // Return thankyou redirect
-        // return array(
-        //  'result'    => 'success',
-        //  'redirect'  => add_query_arg('key', $order->order_key, add_query_arg('order', $order_id, get_permalink(woocommerce_get_page_id('thanks'))))
-        // );
+    }
+
+    /* Process the payment and return the result. */
+    function process_payment ($order_id) {
+       $order = new WC_Order( $order_id );
+       return array(
+           'result' => 'success',
+           'redirect' => add_query_arg('order', $order->id, add_query_arg('key', $order->order_key, get_permalink(get_option('woocommerce_pay_page_id'))))
+       );
+
     }
 
 
